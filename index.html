@@ -9,32 +9,35 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
-    /* Eliminamos todos los márgenes y rellenos del navegador */
+    /* Eliminación absoluta de márgenes del navegador */
     html, body {
       margin: 0 !important;
       padding: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      background-color: #0d0d11;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow: hidden;
+      width: 100vw !important;
+      height: 100vh !important;
+      background-color: #000000 !important;
+      overflow: hidden !important;
+      position: fixed;
+      top: 0;
+      left: 0;
     }
 
-    /* Contenedor forzado a ocupar desde la esquina superior izquierda (0,0) hasta los bordes */
+    /* El contenedor se pega a las 4 esquinas de la ventana */
     .player-container {
       position: absolute;
       top: 0;
       left: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
       height: 100%;
       background: #000;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-sizing: border-box;
     }
 
-    /* Área de vídeo ajustada al área disponible */
+    /* Área de pantalla del reproductor */
     .screen-area {
       flex: 1;
       width: 100%;
@@ -48,12 +51,12 @@
     video {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* Ajusta la imagen sin estirarla */
-      border: none;
-      outline: none;
+      object-fit: contain;
+      border: 0;
+      outline: 0;
     }
 
-    /* Barra de controles inferior */
+    /* Barra inferior de controles */
     .controls-bar {
       height: 60px;
       width: 100%;
@@ -65,10 +68,9 @@
       padding: 0 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       box-sizing: border-box;
-      z-index: 10;
     }
 
-    /* Badge 4K Neón a la izquierda */
+    /* Badge 4K Neón */
     .badge-4k {
       font-weight: 900;
       font-size: 1.2rem;
@@ -82,7 +84,7 @@
       user-select: none;
     }
 
-    /* Control de Volumen Neón abajo */
+    /* Barra de volumen neón */
     .volume-container {
       display: flex;
       align-items: center;
@@ -132,35 +134,26 @@
 </head>
 <body>
 
-  <div class="player-container" id="player">
-    
-    <!-- Área de Vídeo -->
+  <div class="player-container">
     <div class="screen-area">
       <video id="video" controls autoplay playsinline></video>
     </div>
 
-    <!-- Barra Inferior -->
     <div class="controls-bar">
-      <!-- Rótulo 4K Lado Izquierdo -->
       <div class="badge-4k">4K</div>
-
-      <!-- Barra de Volumen Neón -->
       <div class="volume-container">
         <span class="volume-icon">VOL</span>
         <input type="range" id="volumeControl" class="volume-slider" min="0" max="1" step="0.05" value="0.8">
       </div>
     </div>
-
   </div>
 
   <script>
     const video = document.getElementById('video');
     const volumeControl = document.getElementById('volumeControl');
 
-    // URL M3U8 de Retro 90
     const videoSrc = 'https://6641e38ac34c3.streamlock.net:1936/radioporcuna/radioporcuna/playlist.m3u8';
 
-    // Carga de la emisión
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(videoSrc);
@@ -170,7 +163,6 @@
       video.src = videoSrc;
     }
 
-    // Control de volumen neón
     volumeControl.addEventListener('input', (e) => {
       video.volume = e.target.value;
     });
