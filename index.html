@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canal Retro 90 Jaén - HD</title>
-    <!-- Cargador HLS para vídeo en streaming -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Cargador FLV para vídeo en streaming de baja latencia -->
+    <script src="https://cdn.jsdelivr.net/npm/flv.js@latest"></script>
     <style>
         * {
             margin: 0;
@@ -24,45 +24,26 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            object-fit: contain; /* Mantiene la proporción del vídeo sin deformarlo */
+            object-fit: contain;
             background-color: #000;
         }
     </style>
 </head>
 <body>
-
     <!-- Reproductor de vídeo a pantalla completa -->
     <video id="videoPlayer" controls autoplay playsinline></video>
 
     <script>
-        const video = document.getElementById('videoPlayer');
-        // Enlace .m3u8 del canal de vídeo
-        const streamUrl = 'https://6641e38ac34c3.streamlock.net:1936/radioporcuna/radioporcuna/playlist.m3u8';
-
-        if (Hls.isSupported()) {
-            const hls = new Hls({
-                enableWorker: true,
-                lowLatencyMode: true,          // Activa el modo de baja latencia
-                backBufferLength: 0,           // Libera memoria acumulada de lo ya reproducido
-                maxBufferLength: 3,            // Buffer objetivo de solo 3 segundos
-                maxMaxBufferLength: 5,         // Límite máximo absoluto de buffer
-                liveSyncDurationCount: 1,      // Sincroniza al milímetro con el último trozo emitido
-                liveMaxLatencyDurationCount: 3 // Fuerza un salto hacia adelante si detecta retardo
+        if (flvjs.isSupported()) {
+            var videoElement = document.getElementById('videoPlayer');
+            var flvPlayer = flvjs.createPlayer({
+                type: 'flv',
+                url: 'http://79.144.218.148:8080/live/canal.flv'
             });
-
-            hls.loadSource(streamUrl);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                video.play().catch(e => console.log("Autoplay bloqueado por el navegador:", e));
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Compatibilidad directa para iPhone / Safari
-            video.src = streamUrl;
-            video.addEventListener('loadedmetadata', function() {
-                video.play().catch(e => console.log("Autoplay true:", e));
-            });
+            flvPlayer.attachMediaElement(videoElement);
+            flvPlayer.load();
+            flvPlayer.play();
         }
     </script>
-
 </body>
 </html>
